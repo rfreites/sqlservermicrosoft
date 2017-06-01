@@ -13,11 +13,11 @@ GO
 CREATE TABLE Sales.Supplier
 (
 	SupplierID INTEGER IDENTITY PRIMARY KEY,
-	SupplierName VARCHAR(20) NOT NULL, 
+	SupplierName VARCHAR(20) NOT NULL,
 );
 GO
 
-ALTER TABLE Sales.Product 
+ALTER TABLE Sales.Product
 ADD CONSTRAINT fk_product_supplier
 FOREIGN KEY (Supplier) REFERENCES Sales.Supplier(SupplierID);
 
@@ -25,7 +25,7 @@ INSERT INTO Sales.Supplier
 VALUES('VERDE')
 
 SELECT * FROM Sales.Supplier;
-	
+
 DECLARE @intFlag INT
 SET @intFlag = 1
 DECLARE @decimalPrice DECIMAL
@@ -33,15 +33,15 @@ SET @decimalPrice = 100.00
 DECLARE @intCounter INT
 SET @intCounter = 1
 
-WHILE (@intFlag <=100) 
+WHILE (@intFlag <=100)
 BEGIN
     PRINT @intFlag
     INSERT INTO Sales.Product
 	VALUES('CAR', @decimalPrice, @intCounter)
-	IF @intCounter < 6   
-		SET @intCounter = @intCounter + 1    
-	ELSE   
-		SET @intCounter = @intCounter - 1 
+	IF @intCounter < 6
+		SET @intCounter = @intCounter + 1
+	ELSE
+		SET @intCounter = @intCounter - 1
 
 	SET @intFlag = @intFlag + 1
 END
@@ -56,7 +56,7 @@ SET @decimalPrice = 100.00
 DECLARE @intCounter INT
 SET @intCounter = 1
 
-WHILE (@intFlag <=100) 
+WHILE (@intFlag <=100)
 BEGIN
     PRINT @intFlag
     UPDATE Sales.Product
@@ -65,7 +65,7 @@ BEGIN
 	Supplier = @intCounter
 	WHERE ProductID = @intFlag
 	IF @intCounter = 6
-		BEGIN TRY   
+		BEGIN TRY
 			SET @intCounter = 1
 			SET @decimalPrice = 10.00
 		END TRY
@@ -74,7 +74,7 @@ BEGIN
 			SET @decimalPrice = 100.00
 		END CATCH
 	ELSE
-		SET @intCounter = @intCounter + 1 
+		SET @intCounter = @intCounter + 1
 		SET @decimalPrice = @decimalPrice + 10.00
 
 	SET @intFlag = @intFlag + 1
@@ -144,7 +144,7 @@ DROP TABLE Sales.OrderDetail;
 
 SELECT FLOOR(RAND()*(2500-1000)+1000);
 
-ALTER TABLE Sales.OrderDetail 
+ALTER TABLE Sales.OrderDetail
 ADD CONSTRAINT fk_orderdetail_product
 FOREIGN KEY (SalesOrderDetailID) REFERENCES Sales.Product(ProductID);
 
@@ -155,7 +155,7 @@ SET @decimalPrice = 1000.00
 DECLARE @intCounter INT
 SET @intCounter = 1
 
-WHILE (@intFlag < 200) 
+WHILE (@intFlag < 200)
 BEGIN
     PRINT @intFlag
     INSERT INTO Sales.OrderDetail
@@ -283,3 +283,15 @@ END;
 GO
 
 EXEC dbo.InsertData;
+
+-- XML SUPPORT
+
+-- XML result
+SELECT TOP 5 LastName
+FROM Sales.Customer
+FOR XML AUTO, ROOT('Customer')
+
+-- passing in the entire blod of XML in a variable
+SELECT *
+FROM OPENXML (@idoc, '/ROOT/Customer', 1)
+WITH (CustomerID VARCHAR(10), ContactName VARCHAR(20));
