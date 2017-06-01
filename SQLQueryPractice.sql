@@ -118,3 +118,70 @@ ROLLBACK TRANSACTION
 
 EXEC transferFunds;
 
+SELECT * FROM Sales.Product;
+
+SELECT *
+FROM vw_ProductPrice;
+
+-- SET STATS ON SO WE CAN SEE HOW MANY PAGES ARE READ
+SET STATISTICS IO ON;
+
+CREATE TABLE Sales.OrderDetail
+(
+	SalesOrderID INTEGER IDENTITY PRIMARY KEY,
+	SalesOrderDetailID INTEGER NULL,
+	CarrierTranckingNumber INTEGER NULL,
+	OrderQty INTEGER NULL,
+	SpecialOfferID INTEGER NULL,
+	UnitPrice DECIMAL(8,2) DEFAULT 0.00,
+);
+GO
+
+SELECT * FROM Sales.Product;
+SELECT * FROM Sales.OrderDetail;
+
+DROP TABLE Sales.OrderDetail;
+
+SELECT FLOOR(RAND()*(2500-1000)+1000);
+
+ALTER TABLE Sales.OrderDetail 
+ADD CONSTRAINT fk_orderdetail_product
+FOREIGN KEY (SalesOrderDetailID) REFERENCES Sales.Product(ProductID);
+
+DECLARE @intFlag INT
+SET @intFlag = 1
+DECLARE @decimalPrice DECIMAL
+SET @decimalPrice = 1000.00
+DECLARE @intCounter INT
+SET @intCounter = 1
+
+WHILE (@intFlag < 200) 
+BEGIN
+    PRINT @intFlag
+    INSERT INTO Sales.OrderDetail
+	VALUES(@intFlag, FLOOR(RAND()*(2500-1000)+1000), FLOOR(RAND()*(25-10)+10), NULL, @decimalPrice)
+	SET @intFlag = @intFlag + 1
+END
+GO
+
+SET STATISTICS IO ON;
+
+-- SET STATS ON SO WE CAN SE HOW MANY PAGES ARE READ
+SET STATISTICS IO ON;
+
+-- SHOW THE ACTUAL EXECUTION PLAN
+
+
+SELECT SalesOrderID, OrderQty
+FROM Sales.OrderDetail
+WHERE SalesOrderDetailID = 100;
+
+
+CREATE CLUSTERED INDEX idx_SalesOrderID
+on Sales.OrderDetail(SalesOrderID);
+
+CREATE NONCLUSTERED INDEX idx_SalesOrderID
+on Sales.OrderDetail(SalesOrderID);
+
+
+
