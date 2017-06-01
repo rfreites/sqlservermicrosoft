@@ -285,13 +285,26 @@ GO
 EXEC dbo.InsertData;
 
 -- XML SUPPORT
-
--- XML result
+-- export, XML result
 SELECT TOP 5 LastName
 FROM Sales.Customer
 FOR XML AUTO, ROOT('Customer')
 
--- passing in the entire blod of XML in a variable
+-- import, passing in the entire blod of XML in a variable
 SELECT *
 FROM OPENXML (@idoc, '/ROOT/Customer', 1)
 WITH (CustomerID VARCHAR(10), ContactName VARCHAR(20));
+
+-- JSON SUPPORT
+-- export, JSON result
+SELECT TOP 5 LastName
+FROM Sales.Customer
+FOR JSON AUTO
+
+-- import,
+declare @json nvarchar(255)
+set @json =
+N'[NULL, "string", 1, true]';
+
+SELECT *
+FROM OPENJSON( @json )
