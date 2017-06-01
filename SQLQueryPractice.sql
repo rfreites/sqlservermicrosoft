@@ -183,5 +183,32 @@ on Sales.OrderDetail(SalesOrderID);
 CREATE NONCLUSTERED INDEX idx_SalesOrderID
 on Sales.OrderDetail(SalesOrderID);
 
+-- ROWGROUPS AND SEGMENTES
+CREATE CLUSTERED COLUMNSTORE INDEX idx_Product
+ON Sales.OrderDetail;
+
+CREATE NONCLUSTERED COLUMNSTORE INDEX idx_Product
+ON Sales.OrderDetail(CarrierTrackingNumber, OrderQty);
+
+-- Query tables
+SELECT * FROM Sales.OrderDetail;
+SELECT * FROM Sales.Product;
+
+-- Set stats on
+SET STATISTICS IO ON
+
+-- SHOW ACTUAL EXECUTION PLAN
+
+SELECT o.SalesOrderDetailID, o.CarrierTranckingNumber, o.OrderQty, o.UnitPrice, i.ProductName, i.Price
+FROM Sales.OrderDetail AS o
+JOIN Sales.Product AS i
+ON o.SalesOrderDetailID = i.ProductID
+WHERE i.Supplier = 4
+AND o.SalesOrderDetailID > 50
+AND o.OrderQty > 10
+
+
+
+
 
 
